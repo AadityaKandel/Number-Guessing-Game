@@ -43,11 +43,11 @@ def calculate():
 	a = len(addition_lists)
 	s = len(subtraction_lists)
 
-	for i in range(a+s):
-		try:
+	for i in range(max(a,s)):
+		if i<a:
 			generated_texts.append(f'Add {addition_lists[i]} to your number')
-		except:
-			generated_texts.append(f'Subtract {subtraction_lists[i-s]} from your number')
+		if i<s:
+			generated_texts.append(f'Subtract {subtraction_lists[i]} from your number')
 
 	generated_texts.append('Now, subtract the original number from your final number')
 	b1.config(text="Next",command=process_output)
@@ -79,6 +79,5 @@ b1 = Button(text="Done",font=font,command=initiate_magic,width=15,bg="white")
 b1.bind("<Enter>",enter)
 b1.bind("<Leave>",leave)
 b1.pack()
-
 
 root.mainloop()
