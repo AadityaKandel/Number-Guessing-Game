@@ -1,5 +1,6 @@
 from tkinter import *
 import random
+import tkinter.messagebox as tmsg
 
 root = Tk()
 
@@ -19,6 +20,7 @@ length=0
 
 # Creating Functions
 def initiate_magic():
+	initialize_variables()
 	randomize_numbers()
 	calculate()
 
@@ -55,6 +57,7 @@ def calculate():
 
 def process_output():
 	global generated_texts,initial,length
+	b2.config(state=NORMAL) if initial>=1 else None
 	l1.config(text=generated_texts[initial])
 	if initial==(length-1):
 		b1.config(command=magic_output)
@@ -66,18 +69,45 @@ def magic_output():
 
 	l1.config(text=f"Your answer is {final_value}")
 	b1.config(text='YAYY!!',state=DISABLED)
+	b2.config(state=DISABLED)
 
 def enter(event):
-	b1.config(bg="black",fg="white")
+	if event.widget['text']=="Back":
+		b2.config(bg="black",fg="white")
+	else:
+		b1.config(bg="black",fg="white")
+
 def leave(event):
-	b1.config(bg="white",fg="black")
+	if event.widget['text']=="Back":
+		b2.config(bg="white",fg="black")
+	else:
+		b1.config(bg="white",fg="black")
+
+def go_back():
+	global initial
+	initial=initial-2
+	if initial<0:
+		tmsg.showwarning('Warning',"You've reached the end!!")
+		initial=1
+	else:
+		process_output()
 
 l1 = Label(text="Think a number between 1 to 100",font=font)
 l1.pack(pady=(10,70))
 
-b1 = Button(text="Done",font=font,command=initiate_magic,width=15,bg="white")
+f1 = Frame()
+
+b1 = Button(f1,text="Done",font=font,command=initiate_magic,width=15)
+b2 = Button(f1,text="Back",font=font,command=go_back,width=15,bg="white",state=DISABLED)
+
+# Packing Everything
+b2.pack(side=LEFT,padx=(0,8))
 b1.bind("<Enter>",enter)
 b1.bind("<Leave>",leave)
-b1.pack()
+b1.pack(side=LEFT)
+b2.bind("<Enter>",enter)
+b2.bind("<Leave>",leave)
+
+f1.pack(anchor=N)
 
 root.mainloop()
