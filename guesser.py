@@ -20,7 +20,6 @@ length=0
 
 # Creating Functions
 def initiate_magic():
-	initialize_variables()
 	randomize_numbers()
 	calculate()
 
