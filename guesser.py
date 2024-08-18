@@ -9,6 +9,7 @@ root.geometry("450x170")
 root.title("Number Guessing Game")
 
 # Initializing Variables
+initial_text="Think a number between 1 to 100"
 font="Arial 12 italic"
 addition_lists=[]
 subtraction_lists=[]
@@ -17,11 +18,20 @@ decide_operation=None # 1 Means Addition & 0 Means Subtraction
 generated_texts=[]
 initial=0 # This will help in displaying all the texts inside generated_texts
 length=0
+var_list=[addition_lists,subtraction_lists,generated_texts]
 
 # Creating Functions
 def initiate_magic():
 	randomize_numbers()
 	calculate()
+
+def back_to_normal():
+	for x in var_list:
+		x.clear()
+
+	global initial, length
+	initial=0
+	length=0
 
 def randomize_numbers():
 	loop_randomize=r_r(4,8)
@@ -50,6 +60,13 @@ def calculate():
 		if i<s:
 			generated_texts.append(f'Subtract {subtraction_lists[i]} from your number')
 
+		try:
+			if generated_texts[i]==generated_texts[i+1]:
+				print("YES")
+				generated_texts[i+1]+=' again'
+		except:
+			pass
+
 	generated_texts.append('Now, subtract the original number from your final number')
 	b1.config(text="Next",command=process_output)
 	length=len(generated_texts)
@@ -67,20 +84,35 @@ def magic_output():
 	final_value=sum(addition_lists)-sum(subtraction_lists)
 
 	l1.config(text=f"Your answer is {final_value}")
-	b1.config(text='YAYY!!',state=DISABLED)
-	b2.config(state=DISABLED)
+	b2.config(text='Replay',command=initiate_replay)
+	b1.config(state=DISABLED,text="Voilà!")
+	back_to_normal()
 
 def enter(event):
-	if event.widget['text']=="Back":
-		b2.config(bg="black",fg="white")
-	else:
-		b1.config(bg="black",fg="white")
+    button_text = event.widget['text']
+    button_state = event.widget['state']
+
+    if button_state == "disabled":
+        return
+
+    if button_text in ("Back", "Replay"):
+        b2.config(bg="black", fg="white")
+    elif button_text in ("Done", "Next"):
+        b1.config(bg="black", fg="white")
 
 def leave(event):
-	if event.widget['text']=="Back":
-		b2.config(bg="white",fg="black")
-	else:
-		b1.config(bg="white",fg="black")
+    button_text = event.widget['text']
+    button_state = event.widget['state']
+
+    if button_state == "disabled":
+        b1.config(bg="white", fg="black")
+        b2.config(bg="white", fg="black")
+        return
+
+    if button_text in ("Back", "Replay"):
+        b2.config(bg="white", fg="black")
+    elif button_text in ("Done", "Next"):
+        b1.config(bg="white", fg="black")
 
 def go_back():
 	global initial
@@ -91,7 +123,12 @@ def go_back():
 	else:
 		process_output()
 
-l1 = Label(text="Think a number between 1 to 100",font=font)
+def initiate_replay():
+	l1.config(text=initial_text)
+	b1.config(text="Done",command=initiate_magic,state=NORMAL)
+	b2.config(text="Back",command=go_back,state=DISABLED)
+
+l1 = Label(text=initial_text,font=font)
 l1.pack(pady=(10,70))
 
 f1 = Frame()
